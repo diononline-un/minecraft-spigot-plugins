@@ -2,8 +2,6 @@ package me.diono.adventurelog;
 
 import java.util.*;
 
-import java.util.*;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class AdventureLogPlugin extends JavaPlugin implements Listener {
 
-    private static final long COOLDOWN_MS = 5000;
+    private static final long COOLDOWN_MS = 180_000;
 
     private static final Set<Material> ORES = EnumSet.of(
         Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE,
@@ -72,7 +70,8 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
         "end/dragon_egg"
     );
 
-    private final Map<UUID, Map<String, BundleEntry>> bundles = new HashMap<>();
+    private final Map<UUID, String> lastKey = new HashMap<>();
+    private final Map<UUID, Long> lastTime = new HashMap<>();
     private final Map<UUID, String> lastBiome = new HashMap<>();
 
     @Override
@@ -94,11 +93,11 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
         if (killer == null) return;
 
         String key = "kill:" + event.getEntityType().name();
+        if (!shouldAnnounce(killer, key)) return;
+
         String mobName = formatName(event.getEntityType().name());
         String color = isHostile(event.getEntityType()) ? "&c" : "&e";
-        handleBundled(killer, key,
-            "killed a " + color + mobName,
-            "killed %dx " + color + mobName);
+        send(killer, "killed a " + color + mobName);
     }
 
     // ── Ore ─────────────────────────────────────────────────────
@@ -109,10 +108,9 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
         if (!ORES.contains(type)) return;
 
         String key = "ore:" + type.name();
-        String name = formatName(type.name());
-        handleBundled(event.getPlayer(), key,
-            "found &b" + name,
-            "found %dx &b" + name);
+        if (!shouldAnnounce(event.getPlayer(), key)) return;
+
+        send(event.getPlayer(), "found &b" + formatName(type.name()));
     }
 
     // ── Harvest ─────────────────────────────────────────────────
@@ -125,10 +123,8 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
 
         if (HARVEST_BLOCKS.contains(type)) {
             String key = "harvest:" + type.name();
-            String name = formatName(type.name());
-            handleBundled(player, key,
-                "harvested &a" + name,
-                "harvested %dx &a" + name);
+            if (!shouldAnnounce(player, key)) return;
+            send(player, "harvested &a" + formatName(type.name()));
             return;
         }
 
@@ -136,10 +132,8 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
         if (maxAge != null && block.getBlockData() instanceof Ageable ageable) {
             if (ageable.getAge() < maxAge) return;
             String key = "harvest:" + type.name();
-            String name = formatName(type.name());
-            handleBundled(player, key,
-                "harvested &a" + name,
-                "harvested %dx &a" + name);
+            if (!shouldAnnounce(player, key)) return;
+            send(player, "harvested &a" + formatName(type.name()));
         }
     }
 
@@ -151,10 +145,9 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
         if (!(breeder instanceof Player player)) return;
 
         String key = "breed:" + event.getEntity().getType().name();
-        String mobName = formatName(event.getEntity().getType().name());
-        handleBundled(player, key,
-            "bred a &d" + mobName,
-            "bred %dx &d" + mobName);
+        if (!shouldAnnounce(player, key)) return;
+
+        send(player, "bred a &d" + formatName(event.getEntity().getType().name()));
     }
 
     // ── Biome ───────────────────────────────────────────────────
@@ -186,64 +179,35 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
         String key = event.getAdvancement().getKey().getKey();
         if (!STRUCTURE_ADVANCEMENTS.contains(key)) return;
 
-        String name = advancementToName(key);
-        send(event.getPlayer(), "discovered &d" + name);
+        send(event.getPlayer(), "discovered &d" + advancementToName(key));
     }
 
-    // ── Bundling Engine ─────────────────────────────────────────
+    // ── Cooldown Engine ─────────────────────────────────────────
 
-    private static class BundleEntry {
-        int count;
-        long firstSeen;
-        long lastSeen;
-
-        BundleEntry(int count, long ts) {
-            this.count = count;
-            this.firstSeen = ts;
-            this.lastSeen = ts;
-        }
-    }
-
-    private void handleBundled(Player player, String key, String singleMsg, String multiMsg) {
-        long now = System.currentTimeMillis();
+    private boolean shouldAnnounce(Player player, String key) {
         UUID uuid = player.getUniqueId();
-        Map<String, BundleEntry> map = bundles.computeIfAbsent(uuid, k -> new HashMap<>());
+        String current = lastKey.get(uuid);
+        Long last = lastTime.get(uuid);
+        long now = System.currentTimeMillis();
 
-        flushExpired(player, map, key, now);
-
-        BundleEntry entry = map.get(key);
-        if (entry == null) {
-            map.put(key, new BundleEntry(1, now));
-            send(player, singleMsg);
-            return;
+        if (current == null) {
+            lastKey.put(uuid, key);
+            lastTime.put(uuid, now);
+            return true;
         }
 
-        long elapsed = now - entry.firstSeen;
-        if (elapsed > COOLDOWN_MS) {
-            if (entry.count > 1) {
-                send(player, multiMsg.replace("%d", String.valueOf(entry.count)));
-            }
-            entry.count = 1;
-            entry.firstSeen = now;
-            entry.lastSeen = now;
-            send(player, singleMsg);
-            return;
+        if (!current.equals(key)) {
+            lastKey.put(uuid, key);
+            lastTime.put(uuid, now);
+            return true;
         }
 
-        entry.count++;
-        entry.lastSeen = now;
-    }
-
-    private void flushExpired(Player player, Map<String, BundleEntry> map, String currentKey, long now) {
-        Iterator<Map.Entry<String, BundleEntry>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, BundleEntry> e = it.next();
-            if (e.getKey().equals(currentKey)) continue;
-            BundleEntry be = e.getValue();
-            if (now - be.lastSeen > COOLDOWN_MS) {
-                it.remove();
-            }
+        if (now - last > COOLDOWN_MS) {
+            lastTime.put(uuid, now);
+            return true;
         }
+
+        return false;
     }
 
     // ── Messaging ───────────────────────────────────────────────
