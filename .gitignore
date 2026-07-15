@@ -1,0 +1,15 @@
+target/
+*.jar
+*.class
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.metadata/
+dependency-reduced-pom.xml
+# Kompatibilitäts-Snapshots
+compat-baseline/
+# Secrets
+**/config.yml
+!**/config.yml.example

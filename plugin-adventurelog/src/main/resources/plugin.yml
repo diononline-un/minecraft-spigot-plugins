@@ -1,0 +1,6 @@
+name: ${project.name}
+version: ${project.version}
+main: me.diono.adventurelog.AdventureLogPlugin
+api-version: "1.21"
+author: Diono
+description: Announces player highlights in chat - kills, ores, harvests, breeding, biomes, and structure discoveries.

@@ -1,0 +1,9 @@
+# DeepSeek API configuration
+deepseek-api-key: "sk-YOUR_API_KEY_HERE"
+deepseek-model: "deepseek-reasoner"
+
+# Limits
+max-npcs: 3
+
+# Default NPC personality (system prompt for DeepSeek)
+default-personality: "You are a helpful Minecraft worker. You take orders from the player. Be concise and direct."

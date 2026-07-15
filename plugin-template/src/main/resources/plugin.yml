@@ -1,0 +1,6 @@
+name: ${project.name}
+version: ${project.version}
+main: me.diono.example.ExamplePlugin
+api-version: "1.21"
+author: Diono
+description: Template for new Spigot plugins

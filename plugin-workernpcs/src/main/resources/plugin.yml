@@ -1,0 +1,18 @@
+name: ${project.name}
+version: ${project.version}
+main: me.diono.workernpcs.WorkerNPCPlugin
+api-version: "1.21"
+author: Diono
+depend: [Citizens]
+description: AI-driven worker NPCs - follow, farm, breed, build, and chat via DeepSeek.
+commands:
+  worker:
+    description: Manage worker NPCs
+    usage: /worker <create|delete|home|list|task|config>
+permissions:
+  workernpcs.use:
+    description: Use worker NPC commands
+    default: op
+  workernpcs.admin:
+    description: Admin commands (config view)
+    default: op
