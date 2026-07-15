@@ -81,6 +81,7 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
     private final Map<UUID, String> lastKey = new HashMap<>();
     private final Map<UUID, Long> lastTime = new HashMap<>();
     private final Map<UUID, String> lastBiome = new HashMap<>();
+    private final Map<UUID, Long> lastBiomeTime = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -175,7 +176,14 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
 
         String prev = lastBiome.get(uuid);
         if (!name.equals(prev)) {
+            long now = System.currentTimeMillis();
+            Long lastBio = lastBiomeTime.get(uuid);
+            if (lastBio != null && now - lastBio < 60_000) {
+                lastBiome.put(uuid, name);
+                return;
+            }
             lastBiome.put(uuid, name);
+            lastBiomeTime.put(uuid, now);
             send(player, "entered the &a" + name);
         }
     }
@@ -302,13 +310,19 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
     // ── Messaging ───────────────────────────────────────────────
 
     private void send(Player player, String msg) {
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-            "&7[&6!&7] &f" + player.getName() + " &7" + msg));
+        String colored = ChatColor.translateAlternateColorCodes('&',
+            "&7[&6!&7] &f" + player.getName() + " &7" + msg);
+        for (Player p : getServer().getOnlinePlayers()) {
+            p.sendMessage(colored);
+        }
     }
 
     private void sendNow(Player player, String msg) {
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-            "&7[&6!&7] &f" + player.getName() + " &7" + msg));
+        String colored = ChatColor.translateAlternateColorCodes('&',
+            "&7[&6!&7] &f" + player.getName() + " &7" + msg);
+        for (Player p : getServer().getOnlinePlayers()) {
+            p.sendMessage(colored);
+        }
     }
 
     // ── Formatting ──────────────────────────────────────────────
