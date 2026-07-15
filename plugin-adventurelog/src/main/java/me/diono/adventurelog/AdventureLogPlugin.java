@@ -4,9 +4,11 @@ import java.util.*;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Biome;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,10 +16,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AdventureLogPlugin extends JavaPlugin implements Listener {
@@ -58,7 +67,6 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
         "story/follow_ender_eye",
         "story/enter_the_nether",
         "story/enter_the_end",
-        "story/cure_zombie_villager",
         "nether/find_fortress",
         "nether/find_bastion",
         "nether/explore_nether",
@@ -182,6 +190,87 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
         send(event.getPlayer(), "discovered &d" + advancementToName(key));
     }
 
+    // ── Level-Up ────────────────────────────────────────────────
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onLevelUp(PlayerLevelChangeEvent event) {
+        int level = event.getNewLevel();
+        if (level != 10 && level != 20 && level != 30) return;
+        sendNow(event.getPlayer(), "reached level &e" + level);
+    }
+
+    // ── Taming ──────────────────────────────────────────────────
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTame(EntityTameEvent event) {
+        if (!(event.getOwner() instanceof Player player)) return;
+
+        String key = "tame:" + event.getEntityType().name();
+        if (!shouldAnnounce(player, key)) return;
+
+        send(player, "tamed a &d" + formatName(event.getEntityType().name()));
+    }
+
+    // ── Fishing ─────────────────────────────────────────────────
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onFish(PlayerFishEvent event) {
+        if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) return;
+        if (!(event.getCaught() instanceof org.bukkit.entity.Item item)) return;
+
+        ItemStack stack = item.getItemStack();
+        String key = getFishingKey(stack);
+        if (key == null) return;
+        if (!shouldAnnounce(event.getPlayer(), key)) return;
+
+        String name = getFishItemName(stack);
+        send(event.getPlayer(), "fished up &b" + name);
+    }
+
+    // ── Enchanting ──────────────────────────────────────────────
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEnchant(EnchantItemEvent event) {
+        int cost = event.getExpLevelCost();
+        if (cost < 30) return;
+
+        ItemStack item = event.getItem();
+        String name = formatName(item.getType().name());
+        sendNow(event.getEnchanter(), "enchanted &5" + name + " &7(Lv.30)");
+    }
+
+    // ── Villager Cured ──────────────────────────────────────────
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCureZombieVillager(PlayerAdvancementDoneEvent event) {
+        String key = event.getAdvancement().getKey().getKey();
+        if (!"story/cure_zombie_villager".equals(key)) return;
+        sendNow(event.getPlayer(), "cured a &dZombie Villager");
+    }
+
+    // ── World Travel ────────────────────────────────────────────
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        World.Environment from = event.getFrom().getEnvironment();
+        World.Environment to = event.getPlayer().getWorld().getEnvironment();
+        String msg = null;
+
+        if (from != World.Environment.NETHER && to == World.Environment.NETHER) {
+            msg = "entered the &cNether";
+        } else if (from != World.Environment.THE_END && to == World.Environment.THE_END) {
+            msg = "entered the &5End";
+        } else if (from == World.Environment.NETHER && to == World.Environment.NORMAL) {
+            msg = "returned to the &aOverworld";
+        } else if (from == World.Environment.THE_END && to == World.Environment.NORMAL) {
+            msg = "returned from the &5End";
+        }
+
+        if (msg != null) {
+            sendNow(event.getPlayer(), msg);
+        }
+    }
+
     // ── Cooldown Engine ─────────────────────────────────────────
 
     private boolean shouldAnnounce(Player player, String key) {
@@ -217,6 +306,11 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
             "&7[&6!&7] &f" + player.getName() + " &7" + msg));
     }
 
+    private void sendNow(Player player, String msg) {
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+            "&7[&6!&7] &f" + player.getName() + " &7" + msg));
+    }
+
     // ── Formatting ──────────────────────────────────────────────
 
     private static String formatName(String enumName) {
@@ -245,5 +339,50 @@ public class AdventureLogPlugin extends JavaPlugin implements Listener {
     private static String advancementToName(String key) {
         String path = key.contains("/") ? key.substring(key.lastIndexOf('/') + 1) : key;
         return formatName(path);
+    }
+
+    // ── Fishing Helpers ─────────────────────────────────────────
+
+    private static String getFishingKey(ItemStack stack) {
+        Material type = stack.getType();
+
+        // Enchanted items
+        if (stack.containsEnchantment(Enchantment.SILK_TOUCH)
+            || stack.containsEnchantment(Enchantment.UNBREAKING)
+            || stack.containsEnchantment(Enchantment.EFFICIENCY)
+            || stack.containsEnchantment(Enchantment.FORTUNE)
+            || stack.containsEnchantment(Enchantment.LUCK_OF_THE_SEA)
+            || stack.containsEnchantment(Enchantment.LURE)
+            || stack.containsEnchantment(Enchantment.MENDING)
+            || stack.containsEnchantment(Enchantment.SHARPNESS)
+            || stack.containsEnchantment(Enchantment.POWER)
+            || stack.containsEnchantment(Enchantment.PROTECTION)) {
+            return "fish:ENCHANTED";
+        }
+        if (type == Material.ENCHANTED_BOOK
+            && stack.getItemMeta() instanceof EnchantmentStorageMeta meta
+            && !meta.getStoredEnchants().isEmpty()) {
+            return "fish:ENCHANTED";
+        }
+
+        // Treasure items
+        if (type == Material.NAME_TAG) return "fish:NAME_TAG";
+        if (type == Material.SADDLE) return "fish:SADDLE";
+        if (type == Material.NAUTILUS_SHELL) return "fish:NAUTILUS_SHELL";
+
+        // Enchanted bow or rod
+        if ((type == Material.BOW || type == Material.FISHING_ROD) && !stack.getEnchantments().isEmpty()) {
+            return "fish:ENCHANTED";
+        }
+
+        return null;
+    }
+
+    private static String getFishItemName(ItemStack stack) {
+        Material type = stack.getType();
+        if (type == Material.ENCHANTED_BOOK) return "Enchanted Book";
+        if (stack.containsEnchantment(Enchantment.MENDING)) return "Mending " + formatName(type.name());
+        if (!stack.getEnchantments().isEmpty()) return "Enchanted " + formatName(type.name());
+        return formatName(type.name());
     }
 }
