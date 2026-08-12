@@ -34,6 +34,7 @@
         <module>plugin-template</module>
         <module>plugin-adventurelog</module>
         <module>plugin-workernpcs</module>
+        <module>plugin-chestmanager</module>
     </modules>
 
     <dependencyManagement>

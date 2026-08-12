@@ -1,0 +1,22 @@
+name: ${project.name}
+version: ${project.version}
+main: me.diono.chestmanager.ChestManagerPlugin
+api-version: "1.21"
+author: Diono
+description: Villager NPC that sorts items from an input chest into categorized chests
+depend: [Citizens]
+
+permissions:
+  chestmanager.use:
+    description: Allows using /chestmanager commands
+    default: op
+  chestmanager.request:
+    description: Allows using the request chest
+    default: true
+
+commands:
+  chestmanager:
+    description: Manage ChestManager NPCs
+    usage: /chestmanager <create|delete|scan|home|status|radius|interval>
+    permission: chestmanager.use
+    aliases: [cm]
