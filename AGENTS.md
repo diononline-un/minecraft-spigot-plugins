@@ -251,6 +251,28 @@ AI-driven citizen NPCs with DeepSeek integration. Requires **Citizens2**.
 - NPCs auto-remember farm locations, animal pens, ore spots, build sites
 - Config: `plugins/WorkerNPCs/config.yml` (API key, max NPCs)
 
+### ChestManager (`plugin-chestmanager/`)
+Citizens-NPC, der Truheninhalte nach Kategorien sortiert (Copper-Golem-Prinzip: jede
+markierte Truhe ist Quelle und Ziel). Requires **Citizens2**.
+- Architektur: Bukkit-freier Kern unter `me.diono.chestmanager.core` hinter Ports
+  (`WorldPort`, `ChestPort`, `CarryPort`, `NavigationPort`, `JournalPort`, `Clock`,
+  `LogPort`, `FeedbackPort`); Adapter unter `me.diono.chestmanager.bukkit`.
+  Der Kern ist ohne Server unit-testbar und darf keine Bukkit-Typen kennen.
+- `/cm create <Name> [x y z]` – Sorter anlegen (Koordinaten für die Konsole)
+- `/cm scan|status|selftest [Name]` – Bereich ermitteln, Zustand, Einrichtung prüfen
+- `/cm sortnow|pause|resume|unblock [Name]` – Betrieb
+- `/cm list|blocked|log [Name] [Item]` – Einsicht
+- `/cm reload` – `config.yml` neu laden, meldet fehlerhafte Einträge mit Position
+- `/cm setup` – Anleitung mit allen Schildnamen
+- Schilder (erste Zeile, an oder über der Truhe): `[INPUT]` Anker, `[<KATEGORIE>]`
+  Zieltruhe, `[UNSORTABLE]` Auffangtruhe, `[IGNORE]` nicht anfassen
+- Item-Sicherheit: Vor jeder Entnahme schreibt der Sorter einen Journaleintrag nach
+  `plugins/ChestManager/journal/<npc-uuid>.yml`. Getragene Items liegen nie nur im
+  Speicher. Diese Reihenfolge nicht auflösen.
+- Sorter arbeiten stumm (`setSilent(true)`, keine `playSound`-Aufrufe);
+  `NoSoundContractTest` bricht den Build, wenn ein Klangaufruf hinzukommt.
+- Testserver: `docker/` (Paper + Citizens + RCON), Tests siehe `docker/README.md`
+
 ### Citizens2 Integration Pattern
 ```xml
 <repository>
@@ -268,7 +290,19 @@ AI-driven citizen NPCs with DeepSeek integration. Requires **Citizens2**.
 - `@TraitName("name")` + `extends Trait`
 - `@Persist("key")` für persistent fields (Autosave)
 - `run()` wird jeden Tick aufgerufen → Tasks nur alle N Ticks ausführen
-- `onAttach()` / `onSpawn()` / `onRemove()` / `onDespawn()` Lifecycle
+- `onAttach()` / `onSpawn()` / `onRemove()` / `onDespawn()` Lifecycle. Es gibt **kein**
+  `onServerStart()`; wer es aufruft, ruft eine eigene Methode, die Citizens nie aufruft.
+- `getTraitNullable(Class)` statt `getTrait(Class)`, wenn der Trait fehlen darf
+
+### Citizens-Version und Server-Kompatibilität
+Das Artefakt `citizens-main` aus dem Maven-Repo ist **nicht** das verteilbare Plugin;
+ihm fehlen die plattformspezifischen NMS-Module, es scheitert beim Start mit
+`SpigotUtil.getMinecraftPackage`. Als Server-Plugin das Distributions-JAR vom
+Jenkins nutzen:
+`https://ci.citizensnpcs.co/job/Citizens2/lastSuccessfulBuild/artifact/dist/target/`
+- Citizens 2.0.35 (Okt 2024) startet auf Spigot/Paper 26.2 nicht.
+- Citizens 2.0.43-SNAPSHOT (Build 4249) läuft auf Paper 26.2. Verifiziert 2026-09-11.
+- Paper 26.2 verlangt **Java 25** als Laufzeit; gebaut wird weiter mit Java 21.
 
 ---
 

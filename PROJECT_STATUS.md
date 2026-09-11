@@ -1,20 +1,21 @@
 ---
 status: in-development
-progress: 55
+progress: 85
 version: "1.0.0-SNAPSHOT"
-tags: [minecraft, spigot, maven, plugins]
+tags: [minecraft, spigot, maven, plugins, openspec, chestmanager]
 scope: "Multi-Modul-Maven-Monorepo für Diono-Spigot-Plugins (Spigot 26.2, Java 21)"
-last_updated: "2026-08-13"
+last_updated: "2026-09-11"
 next_steps:
-  - ChestManager-Modul fertigstellen (Request-System, Sort-Tasks, Citizens-Trait testen)
-  - Kompatibilitäts-Check laufen lassen und Baseline aktuell halten
+  - ChestManager: unerreichbare Truhe wird im Selbsttest nicht als Fehler gemeldet (offener Punkt aus dem Container-Test)
+  - ChestManager auf dem Live-Server ausrollen (alte NPCs löschen, config.yml aus Vorlage, /cm selftest)
+  - Citizens-Version im Parent-POM auf 2.0.43-SNAPSHOT heben (2.0.35 läuft nicht auf Spigot 26.2)
   - WorkerNPCs DeepSeek-Integration und Memory-System auf dem Testserver verifizieren
-  - Tests/Server-Tests für AdventureLog-Announcements ergänzen
 ---
 
 # Aktueller Stand
 - Maven-Multi-Modul mit Parent-POM, zentraler Spigot-Version (26.2-R0.1-SNAPSHOT) und Java 21
-- Drei aktive Plugins: AdventureLog (Event-Announcements mit Anti-Spam), WorkerNPCs (KI-NPCs mit Citizens2/DeepSeek), ChestManager (neu, letzter Commit)
-- Tooling vorhanden: compat-check.sh (Deprecation-Baseline) und update-version.sh (Versionsupdate mit Breaking-Change-Check)
-- plugin-template als Kopiervorlage für neue Plugins
-- Keine automatisierten Tests oder CI; Verifikation läuft manuell auf dem Server
+- Vier Plugins: AdventureLog, WorkerNPCs (Citizens2/DeepSeek), ChestManager (neu aufgesetzt), plugin-template
+- ChestManager: Copper-Golem-artiger Sorter, Bukkit-freier Domänenkern mit 112 Unit-Tests plus Container-Tests
+- OpenSpec ist eingeführt (`openspec/`, `.agents/skills/openspec-*`); Change `rebuild-chest-sorter-core`
+- Testserver per Docker (`docker/`): Paper 26.2, Citizens, RCON-Steuerung und Testskripte
+- Build braucht JDK 21 user-space unter `~/.local/share/toolchain/`; `./build.sh` kapselt das

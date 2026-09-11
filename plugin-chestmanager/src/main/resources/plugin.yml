@@ -1,22 +1,24 @@
 name: ${project.name}
 version: ${project.version}
-main: me.diono.chestmanager.ChestManagerPlugin
+main: me.diono.chestmanager.bukkit.ChestManagerPlugin
 api-version: "1.21"
 author: Diono
-description: Villager NPC that sorts items from an input chest into categorized chests
+description: Citizens-NPC, der Truheninhalte nach Kategorien sortiert
 depend: [Citizens]
 
 permissions:
-  chestmanager.use:
-    description: Allows using /chestmanager commands
+  chestmanager.admin:
+    description: Sorter anlegen, entfernen, verschieben und die Konfiguration neu laden
     default: op
-  chestmanager.request:
-    description: Allows using the request chest
-    default: true
+  chestmanager.operate:
+    description: Sortierläufe auslösen, anhalten und Sperren aufheben
+    default: op
+  chestmanager.view:
+    description: Status, Sperrliste, Selbsttest und Transportprotokoll einsehen
+    default: op
 
 commands:
   chestmanager:
-    description: Manage ChestManager NPCs
-    usage: /chestmanager <create|delete|scan|home|status|radius|interval>
-    permission: chestmanager.use
+    description: ChestManager verwalten
+    usage: /chestmanager <create|delete|list|scan|status|sortnow|selftest|blocked|unblock|log|pause|resume|home|reload|setup>
     aliases: [cm]
