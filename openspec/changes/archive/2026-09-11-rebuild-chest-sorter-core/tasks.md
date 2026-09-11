@@ -109,4 +109,4 @@
 - [x] 12.3 `README.md` und `AGENTS.md` um die neue ChestManager-Bedienung ergänzen; die dort beschriebenen Befehle stimmen mit `plugin.yml` überein
 - [x] 12.4 `PROJECT_STATUS.md` auf den erreichten Stand setzen (Frontmatter und Body, maximal zehn Body-Zeilen)
 - [x] 12.5 `CHANGELOG.md`-Eintrag mit Datum und Kurztitel ergänzen
-- [ ] 12.6 Change mit `openspec archive rebuild-chest-sorter-core` archivieren; `openspec/specs/` enthält danach die fünf Capabilities
+- [x] 12.6 Change mit `openspec archive rebuild-chest-sorter-core` archivieren; `openspec/specs/` enthält danach die fünf Capabilities
