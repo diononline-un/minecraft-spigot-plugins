@@ -80,11 +80,12 @@ def build(rcon, with_sealed=False):
             f"{{front_text:{{messages:['{{\"text\":\"[ORES]\"}}','{{\"text\":\"\"}}',"
             f"'{{\"text\":\"\"}}','{{\"text\":\"\"}}']}}}}"
         )
-        # Alle begehbaren Nachbarluken zumauern. Die x-Nachbarn sind Truhen und
-        # damit ohnehin blockiert; die Aussenseite und die z-Seite nicht.
-        for dx, dy, dz in [(1, 0, 0), (1, 1, 0),
-                           (0, 0, 1), (0, 1, 1),
-                           (0, 0, -1), (0, 1, -1)]:
+        # Ein Schild ist passabel; ohne Deckel darueber koennte der Sorter auf die
+        # Truhe steigen. Die Einmauerung braucht deshalb den Block ueber dem Schild.
+        for dx, dy, dz in [(1, 0, 0),
+                           (0, 0, 1),
+                           (0, 0, -1),
+                           (0, 2, 0)]:
             rcon.command(
                 f"setblock {SEALED[0] + dx} {SEALED[1] + dy} {SEALED[2] + dz} "
                 f"minecraft:obsidian replace")
@@ -131,14 +132,16 @@ def test_sealed_chest(rcon):
             break
         time.sleep(3)
     check_true("Eingemauerte Truhe ist gesperrt", "4/-54/0" in blocked, blocked)
+    # Eine volle Kategorie darf nur die betroffenen Stapel liegen lassen.
     check("Brot trotzdem sortiert", total_in_chest(rcon, FOOD, "minecraft:bread"), 12)
-    check("Erz trotzdem sortiert", total_in_chest(rcon, ORES, "minecraft:iron_ore"), 24)
+    check("Erz bleibt liegen, weil seine Kategorie voll ist",
+          total_in_chest(rcon, ANCHOR, "minecraft:iron_ore"), 24)
 
 
 def test_scan_time(rcon):
     print("\n[B] Scan-Zeit im Status")
-    status = rcon.command("cm status Sorter")
-    match = re.search(r"Letzter Scan:\s*(\d+)\s*ms", status)
+    status = rcon.command("cm status Sorter").replace("§", "")
+    match = re.search(r"Letzter Scan:\s*\w*\s*(\d+)\s*ms", status)
     check_true("Status weist die Scan-Dauer aus", match is not None, status[:200])
     if match:
         millis = int(match.group(1))
@@ -190,7 +193,7 @@ def verify_after_stop():
             iron += total_in_chest(rcon, chest, "minecraft:iron_ore")
         check("Alle 400 Erz liegen in Truhen", iron, 400)
 
-        on_ground = rcon.command("execute if entity @e[type=item] run say JA")
+        on_ground = rcon.command("execute if entity @e[type=item]")
         check_true("Nichts liegt auf dem Boden", "JA" not in on_ground)
     finally:
         rcon.close()

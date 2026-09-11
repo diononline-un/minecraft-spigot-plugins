@@ -74,6 +74,8 @@ public final class Sorter {
     private long lastScanDurationMillis;
     private long stateDeadline;
     private long retryAt;
+    /** Stapel, die in diesem Lauf nicht unterzubringen sind: Quelle plus Item-Schlüssel. */
+    private final Set<String> skippedThisRun = new java.util.LinkedHashSet<>();
     private int navAttempts;
     private boolean sortRequested;
     private boolean scanRequested;
@@ -329,16 +331,25 @@ public final class Sorter {
                 continue;
             }
             List<MisplacedStack> misplaced = routing.misplacedIn(candidate, snapshot.get(), area);
-            if (misplaced.isEmpty()) {
+            MisplacedStack next = null;
+            for (MisplacedStack stack : misplaced) {
+                // Ein Stapel, der in diesem Lauf schon abgelehnt wurde, wird nicht
+                // erneut versucht; sonst dreht der Sorter im Kreis.
+                if (!skippedThisRun.contains(skipKey(candidate, stack))) {
+                    next = stack;
+                    break;
+                }
+            }
+            if (next == null) {
                 continue;
             }
             sourceCursor = (sourceCursor + i + 1) % sources.size();
-            errand = new Errand(candidate, null, misplaced.get(0), misplaced.get(0).amount());
+            errand = new Errand(candidate, null, next, next.amount());
             state = SorterState.SEEK_TARGET;
-            detail = "sucht Ziel für " + misplaced.get(0).key();
+            detail = "sucht Ziel für " + next.key();
             return;
         }
-        finishRun(now, "nichts zu sortieren");
+        finishRun(now, skippedThisRun.isEmpty() ? "nichts zu sortieren" : "Rest nicht unterzubringen");
     }
 
     private void stepSeekTarget(long now) {
@@ -357,32 +368,46 @@ public final class Sorter {
         startApproach(errand.source(), now);
     }
 
+    /**
+     * Ein Stapel, für den sich kein Ziel findet, wird für diesen Lauf übersprungen.
+     * Der Lauf endet deshalb nicht: Andere Items in derselben Truhe sollen trotzdem
+     * an ihren Platz, etwa wenn nur eine einzelne Kategorie voll ist.
+     */
     private void handleRejection(TargetChoice.Rejected rejected, MisplacedStack stack, long now) {
-        switch (rejected.reason()) {
+        skippedThisRun.add(skipKey(errand.source(), stack));
+        String reason = switch (rejected.reason()) {
             case NO_CATEGORY_AND_NO_FALLBACK -> {
                 if (!routing.hasReportedUnknownType(stack.key())) {
                     ports.log().warn("Sorter " + name + ": für " + stack.key().typeId()
                             + " fehlt eine Kategorie und es ist keine Auffangtruhe markiert;"
                             + " das Item bleibt liegen");
                 }
-                finishRun(now, "Item ohne Kategorie und ohne Auffangtruhe");
+                yield "Item ohne Kategorie und ohne Auffangtruhe";
             }
             case NO_TARGET_CHEST -> {
                 ports.log().warn("Sorter " + name + ": keine Zieltruhe für Kategorie '"
-                        + rejected.categoryKey() + "'; Items bleiben liegen");
-                finishRun(now, "Zieltruhe fehlt");
+                        + rejected.categoryKey() + "'; betroffene Items bleiben liegen");
+                yield "Zieltruhe fehlt";
             }
             case CATEGORY_FULL -> {
                 ports.log().warn("Sorter " + name + ": Kategorie '" + rejected.categoryKey()
-                        + "' ist voll; Items bleiben liegen");
-                finishRun(now, "Kategorie voll");
+                        + "' ist voll; betroffene Items bleiben liegen");
+                yield "Kategorie voll";
             }
             case ALL_UNREACHABLE -> {
                 ports.log().warn("Sorter " + name + ": alle Zieltruhen der Kategorie '"
                         + rejected.categoryKey() + "' sind gesperrt");
-                finishRun(now, "Zieltruhen gesperrt");
+                yield "Zieltruhen gesperrt";
             }
-        }
+        };
+        errand = null;
+        detail = reason;
+        state = SorterState.SEEK_SOURCE;
+    }
+
+    /** Schlüssel eines übersprungenen Stapels innerhalb eines Laufs. */
+    private static String skipKey(ChestRef source, MisplacedStack stack) {
+        return source.pos() + "|" + stack.key();
     }
 
     private void stepApproachSource(long now) {
@@ -655,6 +680,7 @@ public final class Sorter {
         lastSortAt = now;
         errand = null;
         currentEntry = null;
+        skippedThisRun.clear();
         if (stopped) {
             state = SorterState.STOPPED;
             detail = "angehalten";

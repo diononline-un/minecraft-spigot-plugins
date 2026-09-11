@@ -172,7 +172,7 @@ def verify(rcon):
           total_in_chest(rcon, FALLBACK, "minecraft:nether_star"), 5)
     check("Ignorierte Truhe unangetastet", total_in_chest(rcon, IGNORED, "minecraft:diamond"), 3)
 
-    items_on_ground = rcon.command("execute if entity @e[type=item] run say JA")
+    items_on_ground = rcon.command("execute if entity @e[type=item]")
     check_true("Keine Items auf dem Boden", "JA" not in items_on_ground, items_on_ground)
 
 

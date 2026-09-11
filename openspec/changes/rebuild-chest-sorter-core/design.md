@@ -136,6 +136,13 @@ wandert in die Sperrliste.
 **Alternative: Immer den Block über der Truhe anlaufen.** Verworfen. Bei Truhen
 an Wänden, unter Decken und in Regalwänden ist dieser Block belegt.
 
+**Erkenntnis aus dem Container-Test:** Ein Schild hat keine Kollisionsbox und gilt
+als passabel. Steht das Rollenschild auf der Truhe und ist die Luft darüber frei,
+ist der Schildblock ein gültiger Standort; der Sorter steigt auf die Truhe und
+erreicht sie. Eine Truhe ist erst dann unerreichbar, wenn über dem Schild
+ebenfalls ein Block liegt. Der Zugangstest prüft deshalb zusätzlich den Block über
+dem Kandidaten, und die Tests bilden beide Fälle ab.
+
 ### D7: Arbeitsteilung über Ticks mit festem Budget, ein Scheduler für alle Sorter
 
 Ein einziger `BukkitRunnable` läuft im konfigurierten Takt und gibt jedem

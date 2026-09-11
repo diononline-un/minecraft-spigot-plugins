@@ -98,9 +98,9 @@
 - [x] 11.2 Testskript aufbauen, das per RCON eine Testanlage erstellt: Ankertruhe, je eine Truhe pro Kategorie, Auffangtruhe, eine unerreichbare Truhe, Schilder per `/data merge block`
 - [x] 11.3 Ende-zu-Ende-Test: fehlplatzierte Items in mehreren Truhen werden innerhalb von 60 Sekunden in die richtigen Truhen gebracht; das Skript prüft die Inhalte per `/item replace … container.N`-Rücklesung
 - [x] 11.4 Test: Sorter trägt Items, Container wird hart neu gestartet, nach dem Neustart liegt kein Item ausserhalb einer Truhe und keines doppelt
-- [ ] 11.5 Test: unerreichbare Truhe landet in der Sperrliste, die übrigen Truhen werden weiter sortiert
-- [ ] 11.6 Test: Tick-Zeit — `/cm status` weist die Dauer des letzten Scans aus und kein Tick überschreitet das konfigurierte Budget; Messwerte im Log dokumentiert
-- [ ] 11.7 Test: Plugin deaktivieren während einer Fahrt, getragene Items liegen danach in einer Truhe des Bereichs
+- [x] 11.5 Test: unerreichbare Truhe landet in der Sperrliste, die übrigen Truhen werden weiter sortiert
+- [x] 11.6 Test: Tick-Zeit — `/cm status` weist die Dauer des letzten Scans aus und kein Tick überschreitet das konfigurierte Budget; Messwerte im Log dokumentiert
+- [x] 11.7 Test: Plugin deaktivieren während einer Fahrt, getragene Items liegen danach in einer Truhe des Bereichs
 
 ## 12. Abschluss
 

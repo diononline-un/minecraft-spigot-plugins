@@ -18,8 +18,11 @@
   die übrigen Kategorienamen funktionieren unverändert. Schilder mit JSON-Komponente
   werden ebenfalls gelesen.
 - Sorter arbeitet stumm: keine Geräusche, abgesichert durch einen Contract-Test.
-- Neu: `docker/` mit Paper-Testserver, RCON-Client und drei Testskripten
-  (Ende-zu-Ende, Absturz, Randfälle); `build.sh` kapselt die user-space Toolchain.
-- Offen: Eine eingemauerte Truhe wird im Selbsttest nicht als unerreichbar gemeldet.
+- Eine volle oder fehlende Zieltruhe hält den Lauf nicht mehr auf: Betroffene Stapel
+  werden für den Lauf übersprungen, alles andere wird weiter sortiert. Zuvor brach
+  ein einziger nicht unterzubringender Stapel die gesamte Sortierung ab.
+- Neu: `docker/` mit Paper-Testserver, RCON-Client und vier Testskripten
+  (Ende-zu-Ende, Absturz, Randfälle, eingemauerte Truhe); `build.sh` kapselt die
+  user-space Toolchain.
 - Offen: Citizens im Parent-POM steht auf 2.0.35-SNAPSHOT, das auf Spigot 26.2 nicht
   startet; nötig ist 2.0.43-SNAPSHOT.

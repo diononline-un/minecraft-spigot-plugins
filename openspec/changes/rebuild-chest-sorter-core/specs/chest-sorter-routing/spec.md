@@ -109,6 +109,10 @@ Der Sorter SHALL ein Item, für das keine Zieltruhe der passenden Kategorie Plat
 hat, nicht in eine Truhe einer anderen Kategorie legen. Er SHALL es in der
 Quelltruhe belassen und den Betreiber auf die volle Kategorie hinweisen.
 
+Ein nicht unterzubringender Stapel SHALL die Sortierung der übrigen Stapel nicht
+aufhalten. Der Sorter MUSS andere Items derselben Quelltruhe weiterhin an ihren
+Platz bringen und darf für denselben Stapel nicht wiederholt neuen Anlauf nehmen.
+
 #### Scenario: Kategorie voll
 
 - **WHEN** alle Zieltruhen der Kategorie `ores` keinen freien Platz mehr haben
@@ -118,6 +122,21 @@ Quelltruhe belassen und den Betreiber auf die volle Kategorie hinweisen.
 
 - **WHEN** die Kategorie `ores` voll ist und die Kategorie `blocks` freien Platz hat
 - **THEN** legt der Sorter das Erz nicht in die Blocktruhe
+
+#### Scenario: Volle Kategorie hält andere Stapel nicht auf
+
+- **WHEN** in einer Quelltruhe Erz und Brot liegen, die Erzkategorie voll ist und die Esstruhe Platz hat
+- **THEN** bringt der Sorter das Brot zur Esstruhe und lässt nur das Erz liegen
+
+#### Scenario: Fehlende Zieltruhe hält andere Stapel nicht auf
+
+- **WHEN** in einer Quelltruhe ein Werkzeug ohne markierte Zieltruhe und Brot mit Zieltruhe liegen
+- **THEN** bringt der Sorter das Brot zur Esstruhe und lässt nur das Werkzeug liegen
+
+#### Scenario: Kein Kreisen um nicht unterzubringende Stapel
+
+- **WHEN** ein Stapel nicht unterzubringen ist und sonst nichts zu tun bleibt
+- **THEN** kehrt der Sorter in den Ruhezustand zurück, statt denselben Stapel erneut zu versuchen
 
 ### Requirement: Konfiguration im Betrieb neu laden
 

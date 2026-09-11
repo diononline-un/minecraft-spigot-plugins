@@ -166,7 +166,7 @@ def main():
         check("Summe erhalten", iron + bread, TOTAL)
 
         # Nichts darf auf dem Boden liegen.
-        leftover = rcon.command("execute if entity @e[type=item] run say JA")
+        leftover = rcon.command("execute if entity @e[type=item]")
         if "JA" in leftover:
             # Es kann sich um abgelegte Notlandungen handeln; dann muss das
             # Protokoll sie ausweisen.

@@ -104,6 +104,32 @@ class AccessPointResolverTest {
     }
 
     @Test
+    void schildblockUeberDerTruheIstEinGueltigerZugang() {
+        // Ein Schild hat keine Kollisionsbox und gilt als passabel. Der Sorter kann
+        // von dort aus an die Truhe, deshalb ist eine Truhe mit Schild obendrauf
+        // erreichbar. Das ist im Container verifiziert.
+        FakeWorld world = new FakeWorld().solid(CHEST);
+
+        assertTrue(resolverFor(world).resolve(CHEST, new BlockPos(10, 66, 10)).isPresent());
+    }
+
+    @Test
+    void deckeUeberDemSchildMachtDieTruheUnerreichbar() {
+        // Erst wenn ueber dem Schild ebenfalls ein Block liegt, bleibt kein
+        // Standort neben der Truhe uebrig.
+        FakeWorld world = new FakeWorld()
+                .solid(CHEST)
+                .solid(new BlockPos(11, 64, 10), new BlockPos(9, 64, 10),
+                        new BlockPos(10, 64, 11), new BlockPos(10, 64, 9),
+                        new BlockPos(10, 63, 10),
+                        // Schildblock bleibt passabel, der Block darueber sperrt ihn.
+                        new BlockPos(10, 66, 10));
+
+        assertTrue(resolverFor(world).resolve(CHEST, new BlockPos(10, 65, 10)).isEmpty(),
+                "ohne freien Standort meldet der Resolver Unerreichbarkeit");
+    }
+
+    @Test
     void erkenntUeberlappendeBereiche() {
         ChestArea a = new ChestArea(CHEST, List.of(
                 ChestRef.of(CHEST, RoleKind.ANCHOR),
