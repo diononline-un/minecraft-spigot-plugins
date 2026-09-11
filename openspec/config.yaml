@@ -1,0 +1,54 @@
+schema: spec-driven
+
+context: |
+  Language: de
+  All artifacts must be written in de.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  ## Project
+
+  Monorepo `minecraft-spigot-plugins` mit vier Spigot-Plugins als Maven-Module:
+  `plugin-template`, `plugin-adventurelog`, `plugin-workernpcs`, `plugin-chestmanager`.
+  Jedes Plugin ist ein eigenes Modul mit eigener `pom.xml`; die Spigot-Version
+  steht ausschliesslich in der Root-`pom.xml` (`<spigot.version>`) und wird nie
+  in Modulen dupliziert.
+
+  - Spigot API: 26.2-R0.1-SNAPSHOT, `api-version: "1.21"` in jeder `plugin.yml`
+  - Java 21
+  - Citizens2 2.0.35-SNAPSHOT (`net.citizensnpcs:citizens-main`, scope `provided`)
+    fuer alle NPC-Plugins
+  - Package-Basis: `me.diono.<pluginname>`
+  - Keine Wildcard-Imports ausser fuer `org.bukkit`-Enums
+  - Logger ueber `getLogger()`, nie `System.out`
+  - Commands in `plugin.yml` registrieren, Listener nur per
+    `getPluginManager().registerEvents()`, nie in `plugin.yml`
+  - Keine Bukkit-API-Aufrufe aus Async-Threads; kein Main-Thread-Blocking
+  - `Location` als `world;x;y;z;yaw;pitch` serialisieren, Entities per UUID
+
+  ## Capability naming
+
+  Ein OpenSpec-Root fuer alle Plugins. Capability-Pfade beginnen deshalb mit dem
+  Plugin-Praefix, abgeleitet aus dem Modulnamen ohne `plugin-`:
+  `chest-sorter-area`, `workernpcs-tasks`, `adventurelog-announcements`.
+  Kein Wurzelverzeichnis pro Plugin; die Praefix-Konvention verhindert
+  Kollisionen und haelt `openspec/specs/` flach.
+
+  ## Build and verification
+
+  - Build: `mvn clean package -pl plugin-<name>`
+  - JDK 21 und Maven liegen user-space unter `~/.local/share/toolchain/`
+    (`jdk21/`, `maven/`); nicht im PATH, pro Kommando exportieren:
+    `export JAVA_HOME=~/.local/share/toolchain/jdk21` und
+    `export PATH="$JAVA_HOME/bin:$HOME/.local/share/toolchain/maven/bin:$PATH"`
+  - `./compat-check.sh --diff` prueft neue Deprecation-Warnings gegen Baseline
+  - Verifikation laeuft gegen einen lokalen Spigot-Container mit Citizens2,
+    nicht nur gegen Unit-Tests: Bukkit-Verhalten laesst sich nicht vollstaendig
+    mocken
+
+rules:
+  proposal:
+    - Immer einen Abschnitt "Non-goals" mit explizit ausgeschlossenen Punkten
+  design:
+    - Jede Entscheidung mit verworfener Alternative und Grund dokumentieren
+  tasks:
+    - Test-Task vor Implementierungs-Task desselben Verhaltens (TDD)

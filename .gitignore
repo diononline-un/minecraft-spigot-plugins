@@ -13,3 +13,11 @@ compat-baseline/
 # Secrets
 **/config.yml
 !**/config.yml.example
+
+# Testserver (Paper, Citizens, Welt) – nur die Vorlage bleibt im Repo
+docker/server/*
+!docker/server/server.properties
+
+# Python
+__pycache__/
+*.pyc

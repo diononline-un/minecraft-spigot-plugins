@@ -1,0 +1,357 @@
+# ChestManager – Vorlage. Diese Datei wird beim ersten Start nach config.yml kopiert.
+#
+# Schildnamen im Spiel (erste Zeile eines Schildes an oder über der Truhe):
+#   [INPUT]       Ankertruhe, legt den Bereich fest. Genau eine.
+#   [ORES] ...    Zieltruhe der gleichnamigen Kategorie aus diesem Abschnitt
+#   [UNSORTABLE]  Auffangtruhe für Items, deren Typ in keiner Kategorie steht
+#   [IGNORE]      Truhe im Bereich, die der Sorter nicht anfasst
+
+categories:
+  # Der Schlüssel ist der Name, der auf dem Schild steht (ohne Klammern).
+  ores:
+    display: "Erze & Schätze"
+    icon: IRON_ORE
+    items:
+      - COAL_ORE
+      - DEEPSLATE_COAL_ORE
+      - IRON_ORE
+      - DEEPSLATE_IRON_ORE
+      - COPPER_ORE
+      - GOLD_ORE
+      - DEEPSLATE_GOLD_ORE
+      - REDSTONE_ORE
+      - LAPIS_ORE
+      - DIAMOND_ORE
+      - DEEPSLATE_DIAMOND_ORE
+      - EMERALD_ORE
+      - NETHER_QUARTZ_ORE
+      - ANCIENT_DEBRIS
+      - RAW_IRON
+      - RAW_COPPER
+      - RAW_GOLD
+      - COAL
+      - IRON_INGOT
+      - GOLD_INGOT
+      - COPPER_INGOT
+      - DIAMOND
+      - EMERALD
+      - LAPIS_LAZULI
+      - REDSTONE
+      - QUARTZ
+      - NETHERITE_SCRAP
+      - NETHERITE_INGOT
+      - AMETHYST_SHARD
+
+  blocks:
+    display: "Baublöcke"
+    icon: STONE
+    items:
+      - STONE
+      - COBBLESTONE
+      - DEEPSLATE
+      - COBBLED_DEEPSLATE
+      - GRANITE
+      - DIORITE
+      - ANDESITE
+      - DIRT
+      - GRASS_BLOCK
+      - SAND
+      - GRAVEL
+      - SANDSTONE
+      - NETHERRACK
+      - END_STONE
+      - OBSIDIAN
+      - GLASS
+      - TERRACOTTA
+      - BRICKS
+      - WHITE_CONCRETE
+      - ORANGE_CONCRETE
+      - LIGHT_BLUE_CONCRETE
+      - YELLOW_CONCRETE
+      - LIME_CONCRETE
+      - PINK_CONCRETE
+      - GRAY_CONCRETE
+      - LIGHT_GRAY_CONCRETE
+      - CYAN_CONCRETE
+      - PURPLE_CONCRETE
+      - BLUE_CONCRETE
+      - BROWN_CONCRETE
+      - GREEN_CONCRETE
+      - RED_CONCRETE
+      - BLACK_CONCRETE
+      - WHITE_WOOL
+      - ORANGE_WOOL
+      - YELLOW_WOOL
+      - LIME_WOOL
+      - GREEN_WOOL
+      - CYAN_WOOL
+      - BLUE_WOOL
+      - PURPLE_WOOL
+      - MAGENTA_WOOL
+      - PINK_WOOL
+      - BROWN_WOOL
+      - GRAY_WOOL
+      - LIGHT_GRAY_WOOL
+      - RED_WOOL
+      - BLACK_WOOL
+
+  wood:
+    display: "Holz"
+    icon: OAK_LOG
+    items:
+      - OAK_LOG
+      - SPRUCE_LOG
+      - BIRCH_LOG
+      - JUNGLE_LOG
+      - ACACIA_LOG
+      - DARK_OAK_LOG
+      - MANGROVE_LOG
+      - CHERRY_LOG
+      - OAK_PLANKS
+      - SPRUCE_PLANKS
+      - BIRCH_PLANKS
+      - JUNGLE_PLANKS
+      - ACACIA_PLANKS
+      - DARK_OAK_PLANKS
+      - MANGROVE_PLANKS
+      - CHERRY_PLANKS
+      - STICK
+
+  tools:
+    display: "Werkzeug & Waffen"
+    icon: IRON_PICKAXE
+    items:
+      - WOODEN_PICKAXE
+      - STONE_PICKAXE
+      - IRON_PICKAXE
+      - GOLDEN_PICKAXE
+      - DIAMOND_PICKAXE
+      - NETHERITE_PICKAXE
+      - WOODEN_AXE
+      - STONE_AXE
+      - IRON_AXE
+      - DIAMOND_AXE
+      - NETHERITE_AXE
+      - WOODEN_SHOVEL
+      - IRON_SHOVEL
+      - DIAMOND_SHOVEL
+      - WOODEN_HOE
+      - IRON_HOE
+      - DIAMOND_HOE
+      - WOODEN_SWORD
+      - STONE_SWORD
+      - IRON_SWORD
+      - DIAMOND_SWORD
+      - NETHERITE_SWORD
+      - BOW
+      - CROSSBOW
+      - ARROW
+      - SHIELD
+      - FISHING_ROD
+      - FLINT_AND_STEEL
+      - SHEARS
+
+  armor:
+    display: "Rüstung"
+    icon: IRON_CHESTPLATE
+    items:
+      - LEATHER_HELMET
+      - LEATHER_CHESTPLATE
+      - LEATHER_LEGGINGS
+      - LEATHER_BOOTS
+      - CHAINMAIL_HELMET
+      - CHAINMAIL_CHESTPLATE
+      - CHAINMAIL_LEGGINGS
+      - CHAINMAIL_BOOTS
+      - IRON_HELMET
+      - IRON_CHESTPLATE
+      - IRON_LEGGINGS
+      - IRON_BOOTS
+      - GOLDEN_HELMET
+      - GOLDEN_CHESTPLATE
+      - GOLDEN_LEGGINGS
+      - GOLDEN_BOOTS
+      - DIAMOND_HELMET
+      - DIAMOND_CHESTPLATE
+      - DIAMOND_LEGGINGS
+      - DIAMOND_BOOTS
+      - NETHERITE_HELMET
+      - NETHERITE_CHESTPLATE
+      - NETHERITE_LEGGINGS
+      - NETHERITE_BOOTS
+      - TURTLE_HELMET
+      - ELYTRA
+
+  food:
+    display: "Essen"
+    icon: BREAD
+    items:
+      - BREAD
+      - APPLE
+      - GOLDEN_APPLE
+      - CARROT
+      - POTATO
+      - BAKED_POTATO
+      - BEETROOT
+      - WHEAT
+      - WHEAT_SEEDS
+      - COOKED_BEEF
+      - BEEF
+      - COOKED_PORKCHOP
+      - PORKCHOP
+      - COOKED_CHICKEN
+      - CHICKEN
+      - COOKED_MUTTON
+      - MUTTON
+      - COOKED_COD
+      - COD
+      - COOKED_SALMON
+      - SALMON
+      - MELON_SLICE
+      - SWEET_BERRIES
+      - CAKE
+      - COOKIE
+      - PUMPKIN_PIE
+
+  redstone:
+    display: "Redstone"
+    icon: REDSTONE
+    items:
+      - REDSTONE_TORCH
+      - REDSTONE_BLOCK
+      - REPEATER
+      - COMPARATOR
+      - PISTON
+      - STICKY_PISTON
+      - OBSERVER
+      - HOPPER
+      - DROPPER
+      - DISPENSER
+      - LEVER
+      - NOTE_BLOCK
+      - TARGET
+      - DAYLIGHT_DETECTOR
+      - TRIPWIRE_HOOK
+      - RAIL
+      - POWERED_RAIL
+      - DETECTOR_RAIL
+      - ACTIVATOR_RAIL
+      - MINECART
+
+  natural:
+    display: "Naturmaterial"
+    icon: OAK_SAPLING
+    items:
+      - OAK_SAPLING
+      - SPRUCE_SAPLING
+      - BIRCH_SAPLING
+      - LEATHER
+      - STRING
+      - FEATHER
+      - BONE
+      - BONE_MEAL
+      - GUNPOWDER
+      - SLIME_BALL
+      - EGG
+      - HONEYCOMB
+      - CLAY_BALL
+      - BRICK
+      - FLINT
+      - SNOWBALL
+      - SUGAR_CANE
+      - BAMBOO
+      - KELP
+      - SEA_PICKLE
+
+  mob_drops:
+    display: "Mob-Drops"
+    icon: ROTTEN_FLESH
+    items:
+      - ROTTEN_FLESH
+      - SPIDER_EYE
+      - GHAST_TEAR
+      - MAGMA_CREAM
+      - BLAZE_ROD
+      - ENDER_PEARL
+      - ENDER_EYE
+      - SHULKER_SHELL
+      - PHANTOM_MEMBRANE
+      - INK_SAC
+      - GLOW_INK_SAC
+      - PRISMARINE_SHARD
+      - PRISMARINE_CRYSTALS
+      - NAUTILUS_SHELL
+      - WITHER_SKELETON_SKULL
+      - DRAGON_BREATH
+      - EXPERIENCE_BOTTLE
+
+  misc:
+    display: "Sonstiges"
+    icon: CHEST
+    items:
+      - TORCH
+      - CRAFTING_TABLE
+      - FURNACE
+      - CHEST
+      - BARREL
+      - BOOK
+      - BOOKSHELF
+      - PAPER
+      - MAP
+      - COMPASS
+      - CLOCK
+      - NAME_TAG
+      - SADDLE
+      - LEAD
+      - PAINTING
+      - ITEM_FRAME
+      - FLOWER_POT
+      - LADDER
+      - SCAFFOLDING
+
+# Einstellungen des Sorters. Alle Werte sind optional; fehlende Werte gelten
+# mit den hier gezeigten Voreinstellungen.
+sorter:
+  # Suchraum um den Heimatpunkt beim Ermitteln des Bereichs.
+  search-radius: 48
+  max-chests: 512
+  max-height-difference: 64
+
+  # Abstand, ab dem zwei Truhen als verbunden gelten. 0 heisst: nur direkt
+  # aneinander gebaute Truhen. 1 überbrückt eine Lücke von einem Block.
+  link-distance: 0
+
+  # Wie viele Blöcke der Scan je Server-Tick abfragt. Höher = schneller, aber
+  # mehr Last pro Tick.
+  blocks-per-tick: 4096
+
+  # Reichweite, innerhalb derer der Sorter ein Inventar anfassen darf.
+  reach: 3.5
+
+  # Zeitlimit und Wiederholungen für einen Anlauf zu einer Truhe.
+  nav-timeout-ms: 4000
+  max-nav-attempts: 2
+  retry-backoff-ms: 1000
+
+  # Wie lange eine unerreichbare Truhe ausgelassen wird.
+  block-duration-ms: 120000
+
+  # Höchstzahl gleichzeitig getragener Items (höchstens 54).
+  carry-limit: 27
+
+  # Wartezeit zwischen zwei Sortierläufen und zwischen zwei Bereichsermittlungen.
+  sort-interval-ms: 30000
+  rescan-interval-ms: 300000
+
+  # Arbeit je Sorter und Durchlauf, sowie der Takt des Schedulers in Ticks.
+  ops-per-tick: 8
+  tick-period-ticks: 5
+
+  # Obergrenze der gleichzeitig gehaltenen Chunk-Tickets.
+  max-chunk-tickets: 256
+
+  # Umfang des Transportprotokolls.
+  log-capacity: 200
+
+# Ausführliche Ausgabe im Serverlog.
+debug: false

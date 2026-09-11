@@ -1,0 +1,15 @@
+services:
+  minecraft:
+    # Paper 26.2 verlangt Java 25. Das Plugin selbst wird weiterhin mit
+    # Java 21 gebaut; Bytecode 21 läuft auf einer 25er Laufzeit.
+    image: eclipse-temurin:25-jre
+    container_name: chestmanager-test
+    working_dir: /server
+    command: ["java", "-Xms1G", "-Xmx2G", "-jar", "paper.jar", "nogui"]
+    volumes:
+      - ./server:/server
+    ports:
+      - "25575:25575"
+    stdin_open: true
+    tty: true
+    restart: "no"

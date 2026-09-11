@@ -6,11 +6,29 @@ Multi-Modul Maven-Projekt für alle Diono-Minecraft-Spigot-Plugins.
 
 | Property      | Wert                     |
 |---------------|--------------------------|
-| Spigot API    | `1.21.4-R0.1-SNAPSHOT`   |
-| Java          | 21                       |
+| Spigot API    | `26.2-R0.1-SNAPSHOT`     |
+| Java (Build)  | 21                       |
+| Java (Paper 26.2 als Server) | 25        |
 
 Diese Version wird **zentral** in der `pom.xml` unter `<spigot.version>` gepflegt.  
 Alle Plugin-Module erben sie über das Parent-POM.
+
+## Build ohne systemweites JDK
+
+Fehlen `java` und `mvn`, kapselt `build.sh` die user-space Toolchain unter
+`~/.local/share/toolchain/`:
+
+```bash
+./build.sh clean package          # alle Module
+./build.sh test -pl plugin-chestmanager
+```
+
+Alternativ systemweit: `sudo pacman -S jdk21-openjdk maven`.
+
+## Testserver
+
+`docker/` enthält einen Paper-Server mit Citizens und RCON-Steuerung für
+Server-Tests, siehe `docker/README.md`.
 
 ## Projektstruktur
 
