@@ -15,9 +15,14 @@
 > python3 docker/diagnose-sealed.py      # eingemauerte Truhe erkennen
 > ```
 >
-> `./docker/reset-server.sh [--plugins]` setzt den Server auf einen sauberen Stand
-> zurück. Nötig, weil Paper Weltverzeichnisse aus älteren Läufen migriert und dabei
-> abbrechen kann.
+> `./docker/reset-server.sh [--plugins] [--citizens <pfad>]` setzt den Server auf
+> einen sauberen Stand zurück. Nötig, weil Paper Weltverzeichnisse aus älteren
+> Läufen migriert und dabei abbrechen kann. Mit `--citizens` lässt sich ein eigenes
+> Citizens-JAR testen, etwa eine frisch heruntergeladene Version:
+>
+> ```bash
+> ./docker/reset-server.sh --plugins --citizens ~/Downloads/Citizens.jar
+> ```
 >
 > Der Server liegt unter `docker/server/` und ist per `.gitignore` ausgeschlossen.
 

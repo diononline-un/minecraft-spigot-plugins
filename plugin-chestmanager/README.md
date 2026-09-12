@@ -24,11 +24,18 @@ Wirtschaft, keine Welteditoren.
 
 1. **Citizens installieren.** Das verteilbare Plugin-JAR nehmen, nicht das
    Maven-Artefakt `citizens-main`: dem fehlen die plattformspezifischen NMS-Module,
-   es scheitert beim Start mit `SpigotUtil.getMinecraftPackage`. Die passende
-   Version hängt an der Server-Version — Citizens 2.0.35 startet auf Paper 26.2
-   nicht, 2.0.43-SNAPSHOT läuft dort (verifiziert am 2026-09-11).
-   Distributions-JAR:
+   es scheitert beim Start mit `SpigotUtil.getMinecraftPackage`. Ein
+   Distributions-JAR erkennt man an der Größe (rund 4 MB, über 2000 Dateien); die
+   API aus dem Maven-Repo hat 1,4 MB und 774 Dateien.
+
+   **Citizens 2.0.43-SNAPSHOT** deckt Minecraft 1.21.x, 26.1 und 26.2 ab (NMS-Module
+   `v1_21_`, `v1_21_R7`, `v26_1_`, `v26_2_` im JAR). Build 4230 und 4249 sind beide
+   mit dem Sorter verifiziert (2026-09-12). Citizens 2.0.35 aus dem Jahr 2024
+   startet auf Paper 26.2 nicht.
+
+   Bezugsquellen:
    `https://ci.citizensnpcs.co/job/Citizens2/lastSuccessfulBuild/artifact/dist/target/`
+   oder die Download-Seite des Projekts.
 2. **ChestManager bauen und kopieren.**
    ```bash
    ./build.sh package -pl plugin-chestmanager
